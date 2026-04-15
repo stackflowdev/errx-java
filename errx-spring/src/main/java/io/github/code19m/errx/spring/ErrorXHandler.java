@@ -1,11 +1,17 @@
 package io.github.code19m.errx.spring;
 
+import io.github.code19m.errx.ErrorType;
 import io.github.code19m.errx.ErrorX;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Global exception handler that converts {@link ErrorX} into structured HTTP responses.
@@ -47,5 +53,62 @@ public class ErrorXHandler {
         );
 
         return ResponseEntity.status(httpStatus).body(body);
+    }
+
+    // ── Bean Validation: @Valid on @RequestBody ──────────────────────
+
+    /**
+     * Handles validation failures from {@code @Valid} on {@code @RequestBody}.
+     * Extracts per-field error messages and returns them as a VALIDATION error.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        Map<String, String> fields = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        fe -> fe.getField(),
+                        fe -> fe.getDefaultMessage(),
+                        (first, second) -> first + "; " + second
+                ));
+
+        log.warn("Validation error: {}", fields);
+
+        ErrorResponse body = ErrorResponse.of(
+                ErrorType.VALIDATION.defaultCode(),
+                ErrorType.VALIDATION.name(),
+                "Validation failed",
+                fields
+        );
+
+        return ResponseEntity.status(ErrorType.VALIDATION.httpStatus()).body(body);
+    }
+
+    // ── Bean Validation: @Validated on path/query params ────────────
+
+    /**
+     * Handles constraint violations from {@code @Validated} on controller
+     * method parameters (path variables, query parameters).
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, String> fields = ex.getConstraintViolations()
+                .stream()
+                .collect(Collectors.toMap(
+                        cv -> cv.getPropertyPath().toString(),
+                        cv -> cv.getMessage(),
+                        (first, second) -> first + "; " + second
+                ));
+
+        log.warn("Constraint violation: {}", fields);
+
+        ErrorResponse body = ErrorResponse.of(
+                ErrorType.VALIDATION.defaultCode(),
+                ErrorType.VALIDATION.name(),
+                "Validation failed",
+                fields
+        );
+
+        return ResponseEntity.status(ErrorType.VALIDATION.httpStatus()).body(body);
     }
 }

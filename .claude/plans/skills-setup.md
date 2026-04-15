@@ -49,5 +49,5 @@ Still TODO in the project:
 
 - [x] `WrapWithTypeOnCodes` utility method — `errx-core` ga qo'shildi
 - [x] Spring module tests — ErrorResponseTest (5 test) + ErrorXHandlerTest (11 test)
-- [ ] Spring Bean Validation integration — `MethodArgumentNotValidException` → `ErrorX`
+- [x] Spring Bean Validation integration — MethodArgumentNotValidException + ConstraintViolationException
 - [ ] Spring Boot auto-configuration — `@AutoConfiguration` / `spring.factories`

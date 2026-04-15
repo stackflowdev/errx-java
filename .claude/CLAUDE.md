@@ -105,5 +105,4 @@ When in doubt about how something should behave, check the Go source:
 - `types.go` — Type enum + M/D type aliases
 
 ## What's Not Yet Implemented
-- [ ] Spring Bean Validation integration (MethodArgumentNotValidException → ErrorX)
 - [ ] Auto-configuration for Spring Boot (spring.factories / @AutoConfiguration)
