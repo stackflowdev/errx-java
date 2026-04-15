@@ -19,8 +19,8 @@ The user will provide one of:
 1. Read the Go source file or snippet provided
 2. Read `.claude/CLAUDE.md` for the full set of mapping rules and design decisions
 3. Read the existing Java code to understand what's already implemented:
-   - `errx-core/src/main/java/io/github/code19m/errx/ErrorX.java`
-   - `errx-core/src/main/java/io/github/code19m/errx/ErrorType.java`
+   - `errx-core/src/main/java/io/github/stackflowdev/errx/ErrorX.java`
+   - `errx-core/src/main/java/io/github/stackflowdev/errx/ErrorType.java`
    - Any other relevant files in the target module
 
 ## Step 2: Plan the Mapping
@@ -43,7 +43,7 @@ Apply these Go → Java mappings:
 - **Java 17** — use `instanceof` pattern matching, sealed classes if needed
 - **Immutability** — `Collections.unmodifiableMap()` for returned maps
 - **Comments** explain reasoning, not syntax
-- **Package** — `io.github.code19m.errx` (core) or `io.github.code19m.errx.spring` (spring)
+- **Package** — `io.github.stackflowdev.errx` (core) or `io.github.stackflowdev.errx.spring` (spring)
 
 ## Step 3: Check for Existing Implementation
 

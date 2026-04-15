@@ -34,7 +34,7 @@ List all testable public methods/constructors. For each, identify:
 Organize tests using `@Nested` classes grouped by feature:
 
 ```java
-package io.github.code19m.errx.spring; // match the target package
+package io.github.stackflowdev.errx.spring; // match the target package
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

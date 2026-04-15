@@ -1,7 +1,7 @@
-package io.github.code19m.errx.spring;
+package io.github.stackflowdev.errx.spring;
 
-import io.github.code19m.errx.ErrorType;
-import io.github.code19m.errx.ErrorX;
+import io.github.stackflowdev.errx.ErrorType;
+import io.github.stackflowdev.errx.ErrorX;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * Global exception handler that converts {@link ErrorX} into structured HTTP responses.
  *
- * <p><b>HTTP status mapping:</b> Each {@link io.github.code19m.errx.ErrorType} carries
+ * <p><b>HTTP status mapping:</b> Each {@link io.github.stackflowdev.errx.ErrorType} carries
  * its own HTTP status. Notably, {@code NOT_FOUND} maps to 400 (not 404),
  * because 404 is reserved for routing-level "no such endpoint" responses.
  *

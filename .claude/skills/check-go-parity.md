@@ -33,8 +33,8 @@ Key Go source files:
 ## Step 2: Read Java Source
 
 Read all Java source files in `errx-java`:
-- `errx-core/src/main/java/io/github/code19m/errx/*.java`
-- `errx-spring/src/main/java/io/github/code19m/errx/spring/*.java`
+- `errx-core/src/main/java/io/github/stackflowdev/errx/*.java`
+- `errx-spring/src/main/java/io/github/stackflowdev/errx/spring/*.java`
 
 For each class/enum, extract:
 - Public methods (static and instance)

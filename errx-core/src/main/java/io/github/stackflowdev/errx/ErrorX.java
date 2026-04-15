@@ -1,4 +1,4 @@
-package io.github.code19m.errx;
+package io.github.stackflowdev.errx;
 
 import java.util.Arrays;
 import java.util.Collections;

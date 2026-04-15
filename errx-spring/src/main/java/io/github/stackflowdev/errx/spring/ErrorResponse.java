@@ -1,4 +1,4 @@
-package io.github.code19m.errx.spring;
+package io.github.stackflowdev.errx.spring;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 allprojects {
-    group = "io.github.code19m"
+    group = "io.github.stackflowdev"
     version = "0.1.0"
 
     repositories {

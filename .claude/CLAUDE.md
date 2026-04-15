@@ -1,6 +1,6 @@
 # errx-java
 
-Java port of [github.com/code19m/errx](https://github.com/code19m/errx) — structured error handling package for Go.
+Java port of [github.com/stackflowdev/errx](https://github.com/stackflowdev/errx) — structured error handling package for Go.
 
 ## What This Project Is
 
@@ -11,11 +11,11 @@ A Gradle multi-module Java library that provides structured, extensible error ha
 ```
 errx-java/
 ├── errx-core/          # Zero-dependency core library (JDK 17 only)
-│   └── io.github.code19m.errx
+│   └── io.github.stackflowdev.errx
 │       ├── ErrorType   # Enum: INTERNAL, VALIDATION, NOT_FOUND, CONFLICT, AUTH, FORBIDDEN, THROTTLING
 │       └── ErrorX      # Main class: RuntimeException + code/type/fields/details/trace + Builder + static utils
 ├── errx-spring/        # Spring Boot integration (optional module)
-│   └── io.github.code19m.errx.spring
+│   └── io.github.stackflowdev.errx.spring
 │       ├── ErrorResponse    # JSON response record
 │       └── ErrorXHandler    # @RestControllerAdvice global exception handler
 ```

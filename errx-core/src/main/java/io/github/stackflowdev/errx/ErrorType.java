@@ -1,4 +1,4 @@
-package io.github.code19m.errx;
+package io.github.stackflowdev.errx;
 
 /**
  * Categorizes errors into well-known application-level types.

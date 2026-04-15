@@ -1,4 +1,4 @@
-package io.github.code19m.errx;
+package io.github.stackflowdev.errx;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

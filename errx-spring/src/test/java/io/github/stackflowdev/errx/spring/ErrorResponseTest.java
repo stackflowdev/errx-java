@@ -1,7 +1,7 @@
-package io.github.code19m.errx.spring;
+package io.github.stackflowdev.errx.spring;
 
-import io.github.code19m.errx.ErrorType;
-import io.github.code19m.errx.ErrorX;
+import io.github.stackflowdev.errx.ErrorType;
+import io.github.stackflowdev.errx.ErrorX;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
