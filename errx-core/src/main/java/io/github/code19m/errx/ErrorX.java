@@ -194,6 +194,29 @@ public class ErrorX extends RuntimeException {
         return ErrorX.wrap(t).build();
     }
 
+    /**
+     * Wrap the error with a different type if its code matches any of the given codes.
+     * If the code doesn't match, the original type is preserved.
+     *
+     * <p>Equivalent to Go's {@code errx.WrapWithTypeOnCodes(err, type, codes...)}.
+     *
+     * <p>Useful for converting error types based on error codes — e.g. turning
+     * an INTERNAL error into VALIDATION when the code indicates bad input.
+     *
+     * @return wrapped ErrorX with conditionally changed type,
+     *         or {@code null} if cause is null
+     */
+    public static ErrorX wrapWithTypeOnCodes(Throwable cause, ErrorType type, String... codes) {
+        if (cause == null) {
+            return null;
+        }
+        Builder b = wrap(cause);
+        if (Arrays.asList(codes).contains(b.code)) {
+            b.type = type;
+        }
+        return b.build();
+    }
+
     // ── Builder ──────────────────────────────────────────────────────
 
     public static class Builder {

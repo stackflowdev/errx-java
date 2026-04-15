@@ -81,6 +81,20 @@ When wrapping an ErrorX and adding details with a duplicate key:
 - Prefer `instanceof` pattern matching (Java 17)
 - Tests use nested `@Nested` classes grouped by feature
 
+## Claude Code Workflow
+
+### Plans
+- Plan'larni **loyiha ichida** saqlash kerak: `.claude/plans/` papkasiga
+- Har bir plan'ga tushunarli nom bering (masalan: `spring-validation.md`, `auto-config.md`)
+- Plan'da `## Status` bo'limi bo'lsin (TODO / IN PROGRESS / COMPLETED)
+- Yangi conversation'da avval `.claude/plans/` dagi mavjud plan'larni tekshiring
+
+### Skills
+Loyihada 3 ta custom skill mavjud (`.claude/skills/`):
+- `/port-from-go` — Go source file'ni o'qib, Java'ga idiomatic tarzda port qiladi + test yozadi
+- `/test-feature` — Java class uchun JUnit 5 test'lar generatsiya qiladi (@Nested, AssertJ)
+- `/check-go-parity` — Go va Java implementatsiyalarni solishtirib, parity report chiqaradi
+
 ## Go Reference Behavior
 
 When in doubt about how something should behave, check the Go source:
@@ -88,11 +102,8 @@ When in doubt about how something should behave, check the Go source:
 - `options.go` — WithCode, WithType, WithDetails, WithFields, WithTracePrefix
 - `tools.go` — AsErrorX, GetCode, GetType, IsCodeIn, WrapWithTypeOnCodes
 - `trace.go` — addTrace with runtime.Caller
-- `conv.go` — gRPC conversion (not yet ported)
 - `types.go` — Type enum + M/D type aliases
 
 ## What's Not Yet Implemented
-- [ ] gRPC module (errx-grpc) — ToGRPCError / FromGRPCError with protobuf
 - [ ] Spring Bean Validation integration (MethodArgumentNotValidException → ErrorX)
-- [ ] WrapWithTypeOnCodes utility method
 - [ ] Auto-configuration for Spring Boot (spring.factories / @AutoConfiguration)

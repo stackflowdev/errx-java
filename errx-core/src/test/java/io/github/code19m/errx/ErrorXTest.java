@@ -195,6 +195,76 @@ class ErrorXTest {
 
             assertThat(result).isSameAs(original);
         }
+
+        @Test
+        void wrapWithTypeOnCodes_nullReturnsNull() {
+            assertThat(ErrorX.wrapWithTypeOnCodes(null, ErrorType.VALIDATION, "X")).isNull();
+        }
+
+        @Test
+        void wrapWithTypeOnCodes_changesTypeWhenCodeMatches() {
+            ErrorX original = ErrorX.create("bad input")
+                    .code("INVALID_EMAIL")
+                    .type(ErrorType.INTERNAL)
+                    .build();
+
+            ErrorX result = ErrorX.wrapWithTypeOnCodes(original, ErrorType.VALIDATION,
+                    "INVALID_EMAIL", "INVALID_PHONE");
+
+            assertThat(result.type()).isEqualTo(ErrorType.VALIDATION);
+            assertThat(result.code()).isEqualTo("INVALID_EMAIL");
+            assertThat(result.getMessage()).isEqualTo("bad input");
+        }
+
+        @Test
+        void wrapWithTypeOnCodes_preservesTypeWhenCodeDoesNotMatch() {
+            ErrorX original = ErrorX.create("server error")
+                    .code("DB_FAILURE")
+                    .type(ErrorType.INTERNAL)
+                    .build();
+
+            ErrorX result = ErrorX.wrapWithTypeOnCodes(original, ErrorType.VALIDATION,
+                    "INVALID_EMAIL", "INVALID_PHONE");
+
+            assertThat(result.type()).isEqualTo(ErrorType.INTERNAL);
+            assertThat(result.code()).isEqualTo("DB_FAILURE");
+        }
+
+        @Test
+        void wrapWithTypeOnCodes_wrapsPlainException() {
+            var plain = new RuntimeException("plain error");
+
+            ErrorX result = ErrorX.wrapWithTypeOnCodes(plain, ErrorType.VALIDATION,
+                    ErrorX.DEFAULT_CODE);
+
+            // Plain exception has DEFAULT_CODE which matches → type changes
+            assertThat(result.type()).isEqualTo(ErrorType.VALIDATION);
+            assertThat(result.getMessage()).isEqualTo("plain error");
+        }
+
+        @Test
+        void wrapWithTypeOnCodes_addsTrace() {
+            ErrorX original = ErrorX.create("err").build();
+            ErrorX result = ErrorX.wrapWithTypeOnCodes(original, ErrorType.VALIDATION, "X");
+
+            // Trace should be chained with arrow
+            assertThat(result.trace()).contains("→");
+        }
+
+        @Test
+        void wrapWithTypeOnCodes_preservesMetadata() {
+            ErrorX original = ErrorX.create("err")
+                    .code("MY_CODE")
+                    .fields(Map.of("name", "required"))
+                    .details(Map.of("attempt", 3))
+                    .build();
+
+            ErrorX result = ErrorX.wrapWithTypeOnCodes(original, ErrorType.VALIDATION, "OTHER");
+
+            assertThat(result.code()).isEqualTo("MY_CODE");
+            assertThat(result.fields()).containsEntry("name", "required");
+            assertThat(result.details()).containsEntry("attempt", 3);
+        }
     }
 
     // ── toString ─────────────────────────────────────────────────────
