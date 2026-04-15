@@ -13,7 +13,7 @@ import java.util.Objects;
  * {@link RuntimeException} so it can be thrown/caught naturally in Java,
  * while carrying the same rich metadata as the Go version.
  *
- * <h3>Usage</h3>
+ * <h2>Usage</h2>
  * <pre>{@code
  * // Create a new error
  * throw ErrorX.create("User not found")
@@ -250,6 +250,9 @@ public class ErrorX extends RuntimeException {
 
         /** Set validation field errors. Replaces any existing fields. */
         public Builder fields(Map<String, String> fields) {
+            if (fields == null) {
+                return this;
+            }
             this.fields = new HashMap<>(fields);
             return this;
         }
@@ -260,6 +263,9 @@ public class ErrorX extends RuntimeException {
          * they are concatenated with " | " separator.
          */
         public Builder details(Map<String, Object> details) {
+            if (details == null) {
+                return this;
+            }
             for (var entry : details.entrySet()) {
                 String key = entry.getKey();
                 Object newVal = entry.getValue();

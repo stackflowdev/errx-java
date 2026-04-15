@@ -279,6 +279,24 @@ class ErrorXTest {
         assertThat(ex.toString()).isEqualTo("[NOT_FOUND: USER_NOT_FOUND] - user not found");
     }
 
+    // ── Null Safety ──────────────────────────────────────────────────
+
+    @Nested
+    class NullSafetyTests {
+
+        @Test
+        void fields_nullIsIgnored() {
+            ErrorX ex = ErrorX.create("e").fields(null).build();
+            assertThat(ex.fields()).isEmpty();
+        }
+
+        @Test
+        void details_nullIsIgnored() {
+            ErrorX ex = ErrorX.create("e").details(null).build();
+            assertThat(ex.details()).isEmpty();
+        }
+    }
+
     // ── Immutability ─────────────────────────────────────────────────
 
     @Test

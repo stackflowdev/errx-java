@@ -85,16 +85,16 @@ When wrapping an ErrorX and adding details with a duplicate key:
 ## Claude Code Workflow
 
 ### Plans
-- Plan'larni **loyiha ichida** saqlash kerak: `.claude/plans/` papkasiga
-- Har bir plan'ga tushunarli nom bering (masalan: `spring-validation.md`, `auto-config.md`)
-- Plan'da `## Status` bo'limi bo'lsin (TODO / IN PROGRESS / COMPLETED)
-- Yangi conversation'da avval `.claude/plans/` dagi mavjud plan'larni tekshiring
+- ALWAYS save plans inside the project: `.claude/plans/` directory (NEVER use global `~/.claude/plans/`)
+- Use descriptive file names (e.g., `spring-validation.md`, `auto-config.md`)
+- Each plan must have a `## Status` section (TODO / IN PROGRESS / COMPLETED)
+- At the start of a new conversation, check `.claude/plans/` for existing plans first
 
 ### Skills
-Loyihada 3 ta custom skill mavjud (`.claude/skills/`):
-- `/port-from-go` — Go source file'ni o'qib, Java'ga idiomatic tarzda port qiladi + test yozadi
-- `/test-feature` — Java class uchun JUnit 5 test'lar generatsiya qiladi (@Nested, AssertJ)
-- `/check-go-parity` — Go va Java implementatsiyalarni solishtirib, parity report chiqaradi
+This project has 3 custom skills (`.claude/skills/`):
+- `/port-from-go` — Read Go source file and port to idiomatic Java + write tests
+- `/test-feature` — Generate JUnit 5 tests for a Java class (@Nested, AssertJ)
+- `/check-go-parity` — Compare Go and Java implementations, report parity status
 
 ## Go Reference Behavior
 
