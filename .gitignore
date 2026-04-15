@@ -9,3 +9,4 @@ build/
 *.iml
 .vscode/
 .DS_Store
+.claude/settings.json
