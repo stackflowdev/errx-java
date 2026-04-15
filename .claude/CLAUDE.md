@@ -16,8 +16,9 @@ errx-java/
 │       └── ErrorX      # Main class: RuntimeException + code/type/fields/details/trace + Builder + static utils
 ├── errx-spring/        # Spring Boot integration (optional module)
 │   └── io.github.stackflowdev.errx.spring
-│       ├── ErrorResponse    # JSON response record
-│       └── ErrorXHandler    # @RestControllerAdvice global exception handler
+│       ├── ErrorResponse          # JSON response record
+│       ├── ErrorXHandler          # @RestControllerAdvice global exception handler
+│       └── ErrorXAutoConfiguration # Spring Boot auto-configuration (@AutoConfiguration)
 ```
 
 ## Key Design Decisions
@@ -104,5 +105,5 @@ When in doubt about how something should behave, check the Go source:
 - `trace.go` — addTrace with runtime.Caller
 - `types.go` — Type enum + M/D type aliases
 
-## What's Not Yet Implemented
-- [ ] Auto-configuration for Spring Boot (spring.factories / @AutoConfiguration)
+## Status
+All planned features are implemented.
