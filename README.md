@@ -1,33 +1,36 @@
 # errx-java
 
-Structured error handling for Java. Create rich, typed errors with codes, traces, validation fields, and debugging details.
+Structured error handling for Java. One exception type, typed categories,
+i18n-ready messages, validation fields, and a zero-config Spring Boot
+integration.
 
 ## Features
 
-- Error codes and types for machine-readable error handling
-- Automatic caller trace capture via `StackWalker`
+- Single `ErrxException` class with a fluent builder
+- Machine-readable `code` that doubles as an i18n message key
+- Typed error categories mapped to HTTP status codes
 - Validation field errors (`Map<String, String>`)
-- Debugging details (never exposed to clients)
-- Spring Boot integration with auto-configuration
+- Private debugging details (never exposed to clients)
+- Spring Boot auto-configuration with `MessageSource` / `Accept-Language` support
 - Bean Validation support (`@Valid`, `@Validated`)
 
 ## Modules
 
 | Module | Description | Dependencies |
-|--------|-------------|-------------|
+|--------|-------------|--------------|
 | `errx-core` | Core library | JDK 17 only (zero dependencies) |
 | `errx-spring` | Spring Boot integration | Spring Boot 3.x |
 
 ## Quick Start
 
-### Gradle
+### Gradle (Kotlin DSL)
 
 ```kotlin
 // Core only
-implementation("io.github.stackflowdev:errx-core:0.1.0")
+implementation("io.github.stackflowdev:errx-core:0.2.0")
 
 // With Spring Boot integration (includes core)
-implementation("io.github.stackflowdev:errx-spring:0.1.0")
+implementation("io.github.stackflowdev:errx-spring:0.2.0")
 ```
 
 ### Maven
@@ -36,26 +39,37 @@ implementation("io.github.stackflowdev:errx-spring:0.1.0")
 <dependency>
     <groupId>io.github.stackflowdev</groupId>
     <artifactId>errx-core</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 ## Usage
 
-### Create an error
+### Create an exception
 
 ```java
-throw ErrorX.create("User not found")
-        .code("USER_NOT_FOUND")
+throw ErrxException.create()
+        .code("user.not_found")
         .type(ErrorType.NOT_FOUND)
+        .args(userId)
         .build();
 ```
 
-### Create with validation fields
+### With an explicit (non-translated) message
 
 ```java
-throw ErrorX.create("Validation failed")
-        .code("INVALID_INPUT")
+throw ErrxException.create()
+        .code("db.query_failed")
+        .type(ErrorType.INTERNAL)
+        .message("Could not reach primary replica")
+        .build();
+```
+
+### With validation fields
+
+```java
+throw ErrxException.create()
+        .code("validation.failed")
         .type(ErrorType.VALIDATION)
         .fields(Map.of(
             "email", "invalid format",
@@ -70,46 +84,29 @@ throw ErrorX.create("Validation failed")
 try {
     database.query(sql);
 } catch (SQLException e) {
-    throw ErrorX.wrap(e)
-            .code("DB_QUERY_FAILED")
+    throw ErrxException.wrap(e)
+            .code("db.query_failed")
             .details(Map.of("query", sql))
             .build();
 }
 ```
 
-### Formatted messages
+### Extract metadata from any throwable
 
 ```java
-throw ErrorX.createf("User %s not found in %s", userId, tableName)
-        .code("USER_NOT_FOUND")
-        .type(ErrorType.NOT_FOUND)
-        .build();
-```
-
-### Extract error info from any throwable
-
-```java
-String code = ErrorX.getCode(exception);       // "USER_NOT_FOUND" or "UNSPECIFIED"
-ErrorType type = ErrorX.getType(exception);     // NOT_FOUND or INTERNAL
-boolean match = ErrorX.isCodeIn(exception, "USER_NOT_FOUND", "ORDER_NOT_FOUND");
-ErrorX errorX = ErrorX.asErrorX(exception);     // Convert any exception to ErrorX
+String code = ErrxException.getCode(exception);     // "user.not_found" or "unspecified"
+ErrorType type = ErrxException.getType(exception);   // NOT_FOUND or INTERNAL
+boolean match = ErrxException.isCodeIn(exception, "user.not_found", "order.not_found");
+ErrxException ex = ErrxException.asErrxException(exception);
 ```
 
 ### Conditionally change error type
 
 ```java
-// Change type to VALIDATION if error code matches
-ErrorX result = ErrorX.wrapWithTypeOnCodes(exception, ErrorType.VALIDATION,
-        "INVALID_EMAIL", "INVALID_PHONE");
-```
-
-### Cross-service trace propagation
-
-```java
-throw ErrorX.wrap(remoteException)
-        .tracePrefix("order-service")
-        .build();
-// Trace: >>> order-service >>> [OrderService.java:42] OrderService.process
+// Change type to VALIDATION if code matches
+ErrxException result = ErrxException.wrapWithTypeOnCodes(
+        exception, ErrorType.VALIDATION,
+        "invalid.email", "invalid.phone");
 ```
 
 ## Error Types and HTTP Status Codes
@@ -124,80 +121,124 @@ throw ErrorX.wrap(remoteException)
 | `FORBIDDEN` | 403 | Insufficient permissions |
 | `THROTTLING` | 429 | Rate limit exceeded |
 
-> **Note:** `NOT_FOUND` maps to HTTP 400, not 404. HTTP 404 is reserved for routing-level "no such endpoint" responses. A missing business resource (e.g., user not found) is a client input error.
+> **Note:** `NOT_FOUND` maps to HTTP 400, not 404. HTTP 404 is reserved for
+> routing-level "no such endpoint" responses. A missing business resource
+> (e.g., user not found) is a client input error.
 
 ## Spring Boot Integration
 
 Add `errx-spring` to your classpath — it auto-configures everything:
 
 ```kotlin
-implementation("io.github.stackflowdev:errx-spring:0.1.0")
+implementation("io.github.stackflowdev:errx-spring:0.2.0")
 ```
 
 That's it. No `@Import`, no `@ComponentScan`, no configuration needed.
 
 ### What you get automatically
 
-- **ErrorX exception handler** — converts `ErrorX` into structured JSON responses
-- **Bean Validation** — `MethodArgumentNotValidException` and `ConstraintViolationException` are handled
-- **Logging** — server errors (5xx) logged at ERROR, client errors (4xx) at WARN
-- **Security** — `details` and `trace` are never exposed to clients
+- **Exception handler** — converts `ErrxException` into structured JSON responses
+- **Bean Validation** — `MethodArgumentNotValidException` and `ConstraintViolationException` handled
+- **i18n message resolution** — messages translated via `MessageSource` using `Accept-Language`
+- **Logging** — server errors (5xx) at ERROR, client errors (4xx) at WARN
+- **Security** — `details` and `type` are never exposed to clients
 
 ### JSON response format
 
 ```json
 {
-  "code": "USER_NOT_FOUND",
-  "type": "NOT_FOUND",
-  "message": "User not found",
-  "timestamp": "2024-01-15T10:30:00Z"
+  "code": "user.not_found",
+  "message": "User not found (ID: 42)",
+  "timestamp": "2026-04-15T10:30:00Z"
 }
 ```
 
-With validation errors:
+With validation fields:
 
 ```json
 {
-  "code": "VALIDATION",
-  "type": "VALIDATION",
+  "code": "validation.failed",
   "message": "Validation failed",
   "fields": {
     "email": "must be a valid email",
     "name": "must not be blank"
   },
-  "timestamp": "2024-01-15T10:30:00Z"
+  "timestamp": "2026-04-15T10:30:00Z"
 }
+```
+
+> The exception's `type` field is deliberately NOT included in the response
+> body. It maps 1:1 to the HTTP status code, so clients already have that
+> information.
+
+### i18n: messages by `code`
+
+The exception's `code` is also the i18n message key. Spring resolves it
+through whatever `MessageSource` you have configured, using the locale from
+`Accept-Language`.
+
+```properties
+# src/main/resources/messages_en.properties
+user.not_found=User not found (ID: {0})
+validation.failed=Validation failed
+
+# src/main/resources/messages_uz.properties
+user.not_found=Foydalanuvchi topilmadi (ID: {0})
+validation.failed=Ma''lumotlar tekshiruvidan o''tmadi
+```
+
+```java
+throw ErrxException.create()
+        .code("user.not_found")
+        .type(ErrorType.NOT_FOUND)
+        .args(userId)       // → {0} in the bundle message
+        .build();
+```
+
+Request headers drive which bundle Spring picks:
+
+```
+Accept-Language: en  →  "User not found (ID: 42)"
+Accept-Language: uz  →  "Foydalanuvchi topilmadi (ID: 42)"
+```
+
+If no `MessageSource` is configured, or the key is missing from every
+bundle, the handler falls back to the raw `code` as the message.
+
+Configure `MessageSource` in the usual Spring way — for example via
+`application.yml`:
+
+```yaml
+spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
+    always-use-message-format: true  # recommended — keeps apostrophe escaping consistent
 ```
 
 ### Custom handler
 
-To customize, define your own `ErrorXHandler` bean — auto-configuration will back off:
+To customize, define your own `ErrxExceptionHandler` bean — auto-configuration
+will back off:
 
 ```java
 @Bean
-public ErrorXHandler errorXHandler() {
-    return new MyCustomErrorXHandler();
+public ErrxExceptionHandler errxExceptionHandler(MessageSource messageSource) {
+    return new MyCustomErrxExceptionHandler(messageSource);
 }
 ```
 
-## Error Trace
+## Observing the cause chain
 
-Every `ErrorX` automatically captures where it was created or wrapped:
+`ErrxException` preserves Java's native cause chain and stack trace. To debug
+propagation, log the exception directly — SLF4J prints the full chain:
 
-```
-[UserService.java:42] UserService.findById
-```
-
-When wrapped multiple times, traces chain:
-
-```
-[UserController.java:28] UserController.getUser → [UserService.java:42] UserService.findById
-```
-
-Cross-service propagation:
-
-```
->>> api-gateway >>> [Gateway.java:15] Gateway.forward → [UserService.java:42] UserService.findById
+```java
+try {
+    process(request);
+} catch (ErrxException ex) {
+    log.error("request failed", ex);  // logs full stack trace + getCause() chain
+}
 ```
 
 ## Build

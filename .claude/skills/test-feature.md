@@ -10,15 +10,15 @@ You are writing tests for the `errx-java` project.
 ## Input
 
 The user will provide one of:
-- A class name (e.g., "ErrorXHandler", "ErrorResponse")
-- A file path (e.g., `errx-spring/src/main/java/.../ErrorXHandler.java`)
+- A class name (e.g., "ErrxExceptionHandler", "ErrorResponse")
+- A file path (e.g., `errx-spring/src/main/java/.../ErrxExceptionHandler.java`)
 - A specific method or feature to test
 
 ## Step 1: Read the Target
 
 1. Read the target class source code
 2. Read existing tests (if any) to avoid duplication
-3. Read `ErrorXTest.java` as the reference for test style and patterns
+3. Read `ErrxExceptionTest.java` as the reference for test style and patterns
 
 ## Step 2: Analyze the Public API
 
@@ -99,7 +99,7 @@ assertThat(result).isSameAs(original);
 ### Required Coverage
 1. **Happy path** — normal usage with valid inputs
 2. **Default values** — verify defaults when optional params are omitted
-3. **Null handling** — null inputs should behave like Go's nil handling
+3. **Null handling** — null inputs should be ignored or produce well-defined behavior
 4. **Immutability** — returned collections must be unmodifiable
 5. **Edge cases** — empty strings, empty maps, boundary values
 6. **Error conditions** — expected exceptions with correct types/messages
