@@ -67,7 +67,7 @@ public class ErrxException extends RuntimeException {
         super(builder.message, builder.cause);
         this.code = builder.code;
         this.type = builder.type;
-        this.args = builder.args;
+        this.args = Arrays.copyOf(builder.args, builder.args.length);
         this.fields = Collections.unmodifiableMap(builder.fields);
         this.details = Collections.unmodifiableMap(builder.details);
         this.hasExplicitMessage = builder.hasExplicitMessage;
@@ -90,7 +90,7 @@ public class ErrxException extends RuntimeException {
      * Used as {@code {0}, {1}, ...} placeholders in resource bundle templates.
      */
     public Object[] args() {
-        return args;
+        return Arrays.copyOf(args, args.length);
     }
 
     /** Validation field errors. Keys = field names, values = error descriptions. */

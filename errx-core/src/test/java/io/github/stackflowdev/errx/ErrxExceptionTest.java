@@ -299,4 +299,13 @@ class ErrxExceptionTest {
         assertThatThrownBy(() -> ex.details().put("hack", "value"))
                 .isInstanceOf(UnsupportedOperationException.class);
     }
+
+    @Test
+    void args_returnedArrayIsDefensivelyCopied() {
+        ErrxException ex = ErrxException.create().args("a", "b").build();
+        Object[] a = ex.args();
+        a[0] = "MUTATED";
+
+        assertThat(ex.args()[0]).isEqualTo("a");
+    }
 }
