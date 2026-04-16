@@ -103,17 +103,11 @@ When wrapping an `ErrxException` and adding details with a duplicate key:
 
 ## Claude Code Workflow
 
-### Plans
-- ALWAYS save plans inside the project: `.claude/plans/` (NEVER use global `~/.claude/plans/`)
-- Use descriptive file names (e.g., `i18n-support.md`, `auto-config.md`)
-- Each plan must have a `## Status` section (TODO / IN PROGRESS / COMPLETED)
-- At the start of a new conversation, check `.claude/plans/` for existing plans first
-
 ### Skills
 This project has 2 custom skills (`.claude/skills/`):
 - `/test-feature` — Generate JUnit 5 tests for a Java class (`@Nested`, AssertJ)
 - `/add-error-code` — Add a new error code with `messages_*.properties` entries across locales
 
 ## Status
-v0.2.0 — Java-native redesign: `ErrxException` naming, i18n via `MessageSource`,
-response body without `type` field, no custom trace string.
+v0.1.0 — initial public release. `ErrxException` + i18n via `MessageSource` +
+Spring Boot auto-configuration.

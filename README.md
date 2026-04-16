@@ -27,10 +27,10 @@ integration.
 
 ```kotlin
 // Core only
-implementation("io.github.stackflowdev:errx-core:0.2.0")
+implementation("io.github.stackflowdev:errx-core:0.1.0")
 
 // With Spring Boot integration (includes core)
-implementation("io.github.stackflowdev:errx-spring:0.2.0")
+implementation("io.github.stackflowdev:errx-spring:0.1.0")
 ```
 
 ### Maven
@@ -39,7 +39,7 @@ implementation("io.github.stackflowdev:errx-spring:0.2.0")
 <dependency>
     <groupId>io.github.stackflowdev</groupId>
     <artifactId>errx-core</artifactId>
-    <version>0.2.0</version>
+    <version>0.1.0</version>
 </dependency>
 ```
 
@@ -130,7 +130,7 @@ ErrxException result = ErrxException.wrapWithTypeOnCodes(
 Add `errx-spring` to your classpath — it auto-configures everything:
 
 ```kotlin
-implementation("io.github.stackflowdev:errx-spring:0.2.0")
+implementation("io.github.stackflowdev:errx-spring:0.1.0")
 ```
 
 That's it. No `@Import`, no `@ComponentScan`, no configuration needed.
